@@ -1,0 +1,49 @@
+
+# Python-related files
+*.pyc
+*.pyo
+__pycache__/
+*.pyd
+*.pdb
+
+# Virtual environment
+env/
+venv/
+.venv/
+
+# Django-related files
+db.sqlite3
+*.log
+media/
+staticfiles/
+
+# Environment variables
+.env
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.bak
+*~
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Byte-compiled files
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Docker
+*.pid
+*.seed
+*.out
+*.pid.lock
