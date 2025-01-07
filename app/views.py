@@ -14,10 +14,20 @@ def index(request):
     return Response({'message': 'Welcome to the e-commerce API!'})
 
 class ProductViewSet(ModelViewSet):
+    """
+    A viewset for viewing and creating new products.
+    All the operations are supported on products using this viewset.
+    """
     queryset = Product.objects.filter(trashed=False).all()
     serializer_class = ProductSerializer
 
 class OrderViewSet(ModelViewSet):
+    """
+    A viewset for viewing and creating new order.
+    
+    Updating or deleting an order is not allowed.
+
+    """
     queryset = Order.objects.filter(trashed=False).all()
     serializer_class = OrderSerializer
     http_method_names = ['get', 'post']
