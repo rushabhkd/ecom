@@ -20,6 +20,7 @@ class ProductViewSet(ModelViewSet):
 class OrderViewSet(ModelViewSet):
     queryset = Order.objects.filter(trashed=False).all()
     serializer_class = OrderSerializer
+    http_method_names = ['get', 'post']
 
     def create(self, request, *args, **kwargs):
         """

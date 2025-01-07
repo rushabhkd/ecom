@@ -41,6 +41,6 @@ def process_order(order: Order, product_requirements: dict) -> str|None:
         error = e.message if hasattr(e, 'message') else 'An error occurred while processing the order'
         order.status = Order.FAILED
         order.save()
-        print(e.with_traceback())
+        print(e)
     return error
     

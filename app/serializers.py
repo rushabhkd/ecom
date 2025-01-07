@@ -24,5 +24,9 @@ class OrderSerializer(serializers.ModelSerializer):
         total_product_price = sum(
             item.product.price * item.quantity for item in obj.items.all()
         )
+        if total_product_price == 0:
+            # incase of no product in the order
+            # or all products have 0 price
+            return 0
         return max(0, (total_product_price - obj.total_price)*100/total_product_price)
     
