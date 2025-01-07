@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework.viewsets import ModelViewSet
 from .models import OrderItem, Product, Order
+from .utils import create_order, process_order
 from .serializers import ProductSerializer, OrderSerializer
 
 @api_view(['GET'])
@@ -30,31 +31,10 @@ class OrderViewSet(ModelViewSet):
         }
         """
         product_requirements ={item['product_id']:item["quantity"] for item in request.data['products']}
-        products = list(Product.objects.filter(trashed=False).filter(id__in=product_requirements.keys()).all())
-        if len(products) != len(product_requirements):
-            raise ValidationError('Some products do not exist')
-        total_price = 0
-        order = Order.objects.create(total_price=total_price)
-        order_items = []
-        for product in products:
-            order_items.append(OrderItem(order=order, product=product, quantity=product_requirements[product.id]))
-        OrderItem.objects.bulk_create(order_items)
-        try:
-            with transaction.atomic():
-                products = list(Product.objects.select_for_update(nowait=True).filter(trashed=False).filter(id__in=product_requirements.keys()).all())
-                for product in products:
-                    if product.stock < product_requirements[product.id]:
-                        raise ValidationError(f'Not enough stock for product {product.name}')
-                    product.stock -= product_requirements[product.id]
-                    # TODO: add discount logic here
-                    total_price += product.price * product_requirements[product.id]
-                    product.save()
-                order.total_price = total_price
-                order.status = Order.COMPLETED
-                order.save()
-        except ValidationError as e:
-            order.status = Order.FAILED
-            order.save()
-            raise e
-
+        order, creation_error = create_order(product_requirements=product_requirements)
+        if creation_error is not None:
+            return Response(creation_error, status=400)
+        processing_error = process_order(order, product_requirements)
+        if processing_error is not None:
+            return Response(processing_error, status=400)
         return Response(status=201)
