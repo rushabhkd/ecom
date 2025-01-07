@@ -15,7 +15,7 @@ This is an e-commerce API built with Django and Django REST framework. It provid
 1. **Clone the repository:**
 
    ```bash
-   git clone 
+   git clone https://github.com/rushabhkd/ecom.git
    cd ecom
    ```
 
